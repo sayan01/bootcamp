@@ -62,3 +62,9 @@ def register_post():
     db.session.commit()
     flash("Registration Successful, Please login to continue")
     return redirect(url_for('login'))
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username')
+    return redirect(url_for('login'))

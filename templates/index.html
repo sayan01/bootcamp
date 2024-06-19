@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | Grocery Shop</title>
-</head>
-<body>
-    {{var1}}
+  {% extends 'layout.html' %}
+  {% block content %}
   <h1>Hi {{user_name}}</h1> 
+  {{ names | length }}
   <h2>Logged In Users</h2>
   <ul>
       {% for name in names %}
       <li>
-          {{name}}
+          {{name|upper}}
           {% if name == user_name %}
             (you)
           {% endif %}
       </li>
       {% endfor %}
 </ul>
-</body>
-</html>
+<a href="{{url_for('logout')}}" class="btn btn-danger">Logout</a>
+  {% endblock %}
