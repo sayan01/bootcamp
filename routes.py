@@ -1,6 +1,6 @@
 from main import app
 from flask import Flask, render_template, request, redirect, session, url_for, flash
-from models import User, Category, Product, Cart, Transaction, Order
+from models import db, User, Category, Product, Cart, Transaction, Order
 # routes
 
 @app.route('/')
@@ -49,4 +49,8 @@ def register_post():
         flash("Please choose another username, selected username is taken")
         return redirect(url_for('register'))
     
-    return "test"
+    user = User(name=name, username=username, passhash=password)
+    db.session.add(user)
+    db.session.commit()
+    flash("Registration Successful, Please login to continue")
+    return redirect(url_for('login'))
