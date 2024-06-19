@@ -5,6 +5,9 @@ from models import db, User, Category, Product, Cart, Transaction, Order
 
 @app.route('/')
 def home():
+    if 'username' not in session:
+        flash("You need to login first")
+        return redirect(url_for('login'))
     username=session['username']
     return render_template('index.html',
                            var1="blah",
@@ -19,8 +22,13 @@ def login():
 def login_post():
     username = request.form.get('username')
     password = request.form.get('password')
+    user = User.query.filter_by(username=username).first()
+    if not user or not password == user.passhash:
+        flash("Username or password is incorrect")
+        return redirect(url_for('login'))
     session['username'] = username
-    return redirect('/')
+    return redirect(url_for('home'))
+    
 
 @app.route('/register')
 def register():
