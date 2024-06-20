@@ -12,6 +12,9 @@ def login_required(func):
         if 'username' not in session:
             flash("You need to login first")
             return redirect(url_for('login'))
+        user = User.query.filter_by(username=session['username']).first()
+        if not user:
+            return redirect(url_for('logout'))
         return func(*args, **kwargs)
     return wrapper
 
@@ -30,15 +33,39 @@ def home():
 def profile():
     username=session['username']
     user = User.query.filter_by(username=username).first()
-    return render_template('profile.html', user=user)
+    dicebear_options = [
+        ('pixel-art', 'Pixel Art'),
+        ('lorelei', 'Lorelei'),
+        ('bottts', 'Bots'),
+    ]
+    return render_template('profile.html', user=user, dicebear_options=dicebear_options)
 
 @app.route('/profile', methods=['POST'])
 @login_required
 def profile_post():
     dicebear = request.form.get('dicebear')
+    nusername = request.form.get('username')
+    password = request.form.get('password')
+    npassword = request.form.get('npassword')
     username=session['username']
     user = User.query.filter_by(username=username).first()
     user.dicebear_image = dicebear
+
+    if password != "" and npassword != "":
+        if check_password_hash(user.passhash, password):
+            user.passhash = generate_password_hash(npassword)
+            flash("Password changed successfully")
+        else:
+            flash("Entered current password is incorrect")
+
+    if nusername != user.username and nusername != "":
+        quser = User.query.filter_by(username=nusername).first()
+        if quser:
+            flash("Username is already taken, please choose any other username")
+            return redirect(url_for('profile'))
+        user.username = nusername
+        flash(f"Username changed to {nusername}")
+
     db.session.commit()
     return redirect(url_for('profile'))
 

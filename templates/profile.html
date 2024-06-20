@@ -11,10 +11,22 @@
 </div>
 <form action="" method="post">
     <select name="dicebear" id="dicebear" class="form-select">
-        <option value="pixel-art" {% if user.dicebear_image == "pixel-art" %}selected{%endif%} >Pixel Art</option>
-        <option value="lorelei"{% if user.dicebear_image == "lorelei" %}selected{%endif%}>Lorelei</option>
-        <option value="bottts"{% if user.dicebear_image == "bottts" %}selected{%endif%}>Bots</option>
+
+        {% for option in dicebear_options %}
+        <option value="{{option[0]}}"
+        {% if user.dicebear_image == option[0] %}
+        selected
+        {% endif %}
+        >{{option[1]}}</option>
+        {% endfor %}
+
     </select>
+    <label class="form-label" for="username">Username:</label>
+    <input class="form-control" type="username" name="username" id="username" value="{{user.username}}">
+    <label class="form-label" for="password">Current Password:</label>
+    <input class="form-control" type="password" name="password" id="password">
+    <label class="form-label" for="npassword">New Password:</label>
+    <input class="form-control" type="password" name="npassword" id="npassword">
     <button class="btn btn-primary" type="submit">Change</button>
 </form>
 {% endblock %}
