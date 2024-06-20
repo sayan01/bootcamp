@@ -2,18 +2,35 @@ from main import app
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from models import db, User, Category, Product, Cart, Transaction, Order
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 # routes
 
+# decorator
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'username' not in session:
+            flash("You need to login first")
+            return redirect(url_for('login'))
+        return func(*args, **kwargs)
+    return wrapper
+
+
 @app.route('/')
+@login_required
 def home():
-    if 'username' not in session:
-        flash("You need to login first")
-        return redirect(url_for('login'))
     username=session['username']
     return render_template('index.html',
                            var1="blah",
                            user_name=username, names=
                            ['Alpha', 'Bravo', 'Charlie', 'Jack'])
+
+@app.route('/profile')
+@login_required
+def profile():
+    username=session['username']
+    user = User.query.filter_by(username=username).first()
+    return render_template('profile.html', user=user)
 
 
 
