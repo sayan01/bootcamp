@@ -125,6 +125,7 @@ def register_post():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('username')
     return redirect(url_for('login'))
