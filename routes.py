@@ -1,6 +1,7 @@
 from main import app
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from models import db, User, Category, Product, Cart, Transaction, Order
+from werkzeug.security import generate_password_hash, check_password_hash
 # routes
 
 @app.route('/')
@@ -14,6 +15,8 @@ def home():
                            user_name=username, names=
                            ['Alpha', 'Bravo', 'Charlie', 'Jack'])
 
+
+
 @app.route('/login')
 def login():
     return render_template('login.html')
@@ -23,12 +26,13 @@ def login_post():
     username = request.form.get('username')
     password = request.form.get('password')
     user = User.query.filter_by(username=username).first()
-    if not user or not password == user.passhash:
+    password_is_correct = check_password_hash(user.passhash, password)
+    if not user or not password_is_correct:
         flash("Username or password is incorrect")
         return redirect(url_for('login'))
     session['username'] = username
     return redirect(url_for('home'))
-    
+
 
 @app.route('/register')
 def register():
@@ -56,8 +60,11 @@ def register_post():
     if user:
         flash("Please choose another username, selected username is taken")
         return redirect(url_for('register'))
-    
-    user = User(name=name, username=username, passhash=password)
+
+
+    passhash = generate_password_hash(password)
+
+    user = User(name=name, username=username, passhash=passhash)
     db.session.add(user)
     db.session.commit()
     flash("Registration Successful, Please login to continue")
