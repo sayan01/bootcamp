@@ -1,7 +1,41 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>{{ user.username }}</h1>
-    <p>{{ user.name }}</p>
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQljYSrXL1AK2EzLXxKDtbl3hrFbLphwvqzmw&s" alt="">
+<div class="profilecard">
+    <img class="profilepic"
+    src="https://api.dicebear.com/9.x/{{user.dicebear_image}}/svg?seed={{user.username}}" alt="">
+    <div class="profileinfo">
+        <h1>{{ user.username }}</h1>
+        <p>{{ user.name }}</p>
+    </div>
+</div>
+<form action="" method="post">
+    <select name="dicebear" id="dicebear" class="form-select">
+        <option value="pixel-art" {% if user.dicebear_image == "pixel-art" %}selected{%endif%} >Pixel Art</option>
+        <option value="lorelei"{% if user.dicebear_image == "lorelei" %}selected{%endif%}>Lorelei</option>
+        <option value="bottts"{% if user.dicebear_image == "bottts" %}selected{%endif%}>Bots</option>
+    </select>
+    <button class="btn btn-primary" type="submit">Change</button>
+</form>
 {% endblock %}
+
+{% block style %}
+    <style>
+        .profilepic{
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            width: 150px;
+            margin-right: 25px;
+        }
+        .profilecard{
+            margin: 15px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .profileinfo{
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+{% endblock style %}

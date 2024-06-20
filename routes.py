@@ -32,6 +32,16 @@ def profile():
     user = User.query.filter_by(username=username).first()
     return render_template('profile.html', user=user)
 
+@app.route('/profile', methods=['POST'])
+@login_required
+def profile_post():
+    dicebear = request.form.get('dicebear')
+    username=session['username']
+    user = User.query.filter_by(username=username).first()
+    user.dicebear_image = dicebear
+    db.session.commit()
+    return redirect(url_for('profile'))
+
 
 
 @app.route('/login')

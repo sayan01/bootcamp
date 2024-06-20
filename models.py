@@ -11,6 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(32), unique=True, nullable=False)
     passhash = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(50), nullable=True)
+    dicebear_image = db.Column(db.String(50), nullable=True, default="lorelei")
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
 class Category(db.Model):
