@@ -1,4 +1,4 @@
-
+from werkzeug.security import generate_password_hash
 from main import app
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -55,6 +55,7 @@ with app.app_context():
     db.create_all()
     admin = User.query.filter_by(is_admin=True).first()
     if not admin:
-        admin = User(username='admin', passhash='admin', name='Admin', is_admin=True)
+        passhash=generate_password_hash('admin')
+        admin = User(username='admin', passhash=passhash, name='Admin', is_admin=True)
         db.session.add(admin)
         db.session.commit()

@@ -43,8 +43,7 @@ def login_post():
     username = request.form.get('username')
     password = request.form.get('password')
     user = User.query.filter_by(username=username).first()
-    password_is_correct = check_password_hash(user.passhash, password)
-    if not user or not password_is_correct:
+    if not user or not check_password_hash(user.passhash, password):
         flash("Username or password is incorrect")
         return redirect(url_for('login'))
     session['username'] = username
