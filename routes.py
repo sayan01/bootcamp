@@ -14,7 +14,8 @@ def login_required(func):
             return redirect(url_for('login'))
         user = User.query.filter_by(username=session['username']).first()
         if not user:
-            return redirect(url_for('logout'))
+            session.pop('username')
+            return redirect(url_for('login'))
         return func(*args, **kwargs)
     return wrapper
 
@@ -82,7 +83,6 @@ def delete_user(id):
 
     db.session.delete(user)
     db.session.commit()
-    session.pop('username')
     flash("Delete succcessful")
     return redirect(url_for('login'))
 
