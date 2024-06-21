@@ -1,17 +1,5 @@
   {% extends 'layout.html' %}
   {% block content %}
-  <h1>Hi {{user_name}}</h1> 
-  {{ names | length }}
-  <h2>Logged In Users</h2>
-  <ul>
-      {% for name in names %}
-      <li>
-          {{name|upper}}
-          {% if name == user_name %}
-            (you)
-          {% endif %}
-      </li>
-      {% endfor %}
-</ul>
+  <h1>Hi {{user.username}}</h1> 
 <a href="{{url_for('logout')}}" class="btn btn-danger">Logout</a>
   {% endblock %}

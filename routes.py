@@ -19,15 +19,31 @@ def login_required(func):
         return func(*args, **kwargs)
     return wrapper
 
+def admin_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'username' not in session:
+            flash("You need to login first")
+            return redirect(url_for('login'))
+        user = User.query.filter_by(username=session['username']).first()
+        if not user:
+            session.pop('username')
+            return redirect(url_for('login'))
+        if not user.is_admin:
+            flash("You are not authorized to visit this page")
+            return redirect(url_for('home'))
+        return func(*args, **kwargs)
+    return wrapper
 
 @app.route('/')
 @login_required
 def home():
     username=session['username']
-    return render_template('index.html',
-                           var1="blah",
-                           user_name=username, names=
-                           ['Alpha', 'Bravo', 'Charlie', 'Jack'])
+    user = User.query.filter_by(username=username).first()
+    if user.is_admin:
+        return redirect(url_for('admin'))
+    return render_template('index.html', user=user)
+                           
 
 @app.route('/profile')
 @login_required
@@ -145,3 +161,16 @@ def register_post():
 def logout():
     session.pop('username')
     return redirect(url_for('login'))
+
+
+@app.route('/admin')
+@admin_required
+def admin():
+    users = User.query.all()
+    return render_template('admin.html', users=users)
+
+@app.route('/users')
+@admin_required
+def user_list():
+    users = User.query.all()
+    return render_template('admin/users.html', users=users)
