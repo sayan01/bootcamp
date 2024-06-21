@@ -24,7 +24,7 @@
         <td>{{category.description}}</td>
         <td>{{category.products | length }}</td> 
         <td>
-        <a href="#" class="btn btn-primary">
+        <a href="{{url_for('product_list', id=category.id)}}" class="btn btn-primary">
             <i class="fa fa-glass" aria-hidden="true"></i>
             Open</a>
         <a href="{{url_for('category_edit', id=category.id)}}" class="btn btn-outline-primary">

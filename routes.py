@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, session, url_for, f
 from models import db, User, Category, Product, Cart, Transaction, Order
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from datetime import datetime
 # routes
 
 # decorator
@@ -274,3 +275,91 @@ def category_delete_post(id):
     db.session.commit()
     flash("Category deleted successfully")
     return redirect(url_for('category_list'))
+
+
+@app.route('/category/<int:id>/products')
+@admin_required
+def product_list(id):
+    category = Category.query.get(id)
+    if not category:
+        flash("Category does not exist")
+        return redirect(url_for('category_list'))
+    return render_template('admin/category/products.html', category=category)
+
+@app.route('/category/<int:id>/product/add')
+@admin_required
+def product_add(id):
+    category = Category.query.get(id)
+    if not category:
+        flash("Category does not exist")
+        return redirect(url_for('category_list'))
+
+    return render_template('admin/product/add.html', category=category)
+
+@app.route('/category/<int:id>/product/add', methods=['POST'])
+@admin_required
+def product_add_post(id):
+    category = Category.query.get(id)
+    if not category:
+        flash("Category does not exist")
+        return redirect(url_for('category_list'))
+
+    name = request.form.get('name')
+    description = request.form.get('description')
+    price = request.form.get('price')
+    quantity = request.form.get('quantity')
+    dom = request.form.get('dom')
+    best_before = request.form.get('best_before')
+
+    if not name or not price or not quantity:
+        flash("Name, Price, and Quantity are mandatory")
+        return redirect(url_for('product_add'))
+
+    if len(name) > 15:
+        flash("Product Name cannot be more than 15")
+        return redirect(url_for('product_add'))
+
+    if len(description) > 250:
+        flash("Product Description cannot be more than 250")
+        return redirect(url_for('product_add'))
+
+    price = float(price)
+    quantity = float(quantity)
+
+    if price < 0 or quantity < 0:
+        flash("Price, Quantity cannot be negative")
+        return redirect(url_for('product_add'))
+
+    if int(quantity) != quantity:
+        flash("Quantity cannot be fractional")
+        return redirect(url_for('product_add'))
+
+    if best_before:
+        best_before = float(best_before)
+        if best_before < 0:
+            flash("Best Before cannot be negative")
+            return redirect(url_for('product_add'))
+        if int(best_before) != best_before:
+            flash("Best Before cannot be fractional")
+            return redirect(url_for('product_add'))
+
+#   if dom:
+#       dom = datetime.strptime(dom,"yyyy-mm-dd")
+#       if dom > datetime.now():
+#           flash("Quantity cannot be fractional")
+#           return redirect(url_for('product_add'))
+        
+        dom=datetime.now()
+    product = Product(
+        name=name,
+        description=description,
+        price=price,
+        quantity=quantity,
+        dom=dom,
+        best_before=best_before,
+        category = category
+    )
+    db.session.add(product)
+    db.session.commit()
+    flash("Product added successfully")
+    return redirect(url_for('product_list', id=category.id))
