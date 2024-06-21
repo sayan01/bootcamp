@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Delete Product</h1>
+    <h2>Details:</h2>
+    <h3>Name: {{product.name}}</h3>
+    <h3>Description: {{product.description}}</h3>
+    <hr>
+    Are you sure you want to delete this product?
+    <form action="" method="post">
+        <button type="submit" class="btn btn-danger">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            Confirm Delete
+        </button>
+    </form>
+{% endblock %}

@@ -363,3 +363,22 @@ def product_add_post(id):
     db.session.commit()
     flash("Product added successfully")
     return redirect(url_for('product_list', id=category.id))
+
+@app.route('/product/<int:id>/delete')
+@admin_required
+def product_delete(id):
+    product = Product.query.get(id)
+    return render_template('admin/product/delete.html', product=product)
+
+@app.route('/product/<int:id>/delete', methods=['POST'])
+@admin_required
+def product_delete_post(id):
+    product = Product.query.get(id)
+    if not product:
+        flash("Product does not exist")
+        return redirect(url_for('product_delete'))
+    cat_id = product.category_id
+    db.session.delete(product)
+    db.session.commit()
+    flash("Product deleted successfully")
+    return redirect(url_for('product_list', id=cat_id))
