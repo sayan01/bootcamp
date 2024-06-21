@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>List of Categories</h1>
+    <a href="{{url_for('category_add')}}" class="btn btn-primary">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+        Add</a>
+    <hr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Products in the Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for category in categories %}
+      <tr>
+        <td>{{category.id}}</td>
+        <td>{{category.name}}</td>
+        <td>{{category.description}}</td>
+        <td>{{category.products | length }}</td> 
+        <td>
+        <a href="#" class="btn btn-primary">Open</a>
+        <a href="#" class="btn btn-primary">Edit</a>
+        <a href="#" class="btn btn-primary">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

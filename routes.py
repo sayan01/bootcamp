@@ -90,17 +90,21 @@ def profile_post():
 @login_required
 def delete_user(id):
     user = User.query.get(id)
+    current_user = User.query.filter_by(username=session['username']).first()
     if not user:
         flash("Invalid User ID")
         return redirect(url_for('profile'))
-    if user.username != session['username']:
+    if user.username != session['username'] and not current_user.is_admin:
         flash("You are not authorized to perform this action")
+        return redirect(url_for('profile'))
+    if user.is_admin:
+        flash("You cannot delete an admin")
         return redirect(url_for('profile'))
 
     db.session.delete(user)
     db.session.commit()
     flash("Delete succcessful")
-    return redirect(url_for('login'))
+    return redirect(url_for('profile'))
 
 
 @app.route('/login')
@@ -167,10 +171,22 @@ def logout():
 @admin_required
 def admin():
     users = User.query.all()
-    return render_template('admin.html', users=users)
+    categories = Category.query.all()
+    return render_template('admin.html', users=users, categories=categories)
 
 @app.route('/users')
 @admin_required
 def user_list():
     users = User.query.all()
     return render_template('admin/users.html', users=users)
+
+@app.route('/categories')
+@admin_required
+def category_list():
+    categories = Category.query.all()
+    return render_template('admin/category.html', categories=categories)
+
+@app.route('/category/add')
+@admin_required
+def category_add():
+    return render_template('admin/category/add.html')
