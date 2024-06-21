@@ -24,9 +24,15 @@
         <td>{{category.description}}</td>
         <td>{{category.products | length }}</td> 
         <td>
-        <a href="#" class="btn btn-primary">Open</a>
-        <a href="#" class="btn btn-primary">Edit</a>
-        <a href="#" class="btn btn-primary">Delete</a>
+        <a href="#" class="btn btn-primary">
+            <i class="fa fa-glass" aria-hidden="true"></i>
+            Open</a>
+        <a href="{{url_for('category_edit', id=category.id)}}" class="btn btn-outline-primary">
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+            Edit</a>
+        <a href="{{url_for('category_delete', id=category.id)}}" class="btn btn-danger">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            Delete</a>
         </td>
       </tr>
     {% endfor %}

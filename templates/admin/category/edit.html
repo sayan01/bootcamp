@@ -1,20 +1,20 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>Add Category</h1>
+    <h1>Edit Category {{category.name}}</h1>
     <hr>
     <form action="" method="post">
         <label class="form-label" for="name">Category Name:</label>
         <input class="form-control" type="text" name="name" id="name"
-        maxlength="15">
+        maxlength="15" value="{{category.name}}"/>
 
         <label class="form-label" for="description">Category Description:</label>
         <textarea name="description" id="description" cols="30" rows="10" maxlength="250" class="form-control"
-        ></textarea>
+        >{{category.description}}</textarea>
         
         <button type="submit" class="btn btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-            Create
+            <i class="fa fa-pencil" aria-hidden="true"></i>
+            Edit
         </button>
     </form>
 {% endblock %}

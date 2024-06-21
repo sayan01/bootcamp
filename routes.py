@@ -190,3 +190,87 @@ def category_list():
 @admin_required
 def category_add():
     return render_template('admin/category/add.html')
+
+@app.route('/category/add', methods=['POST'])
+@admin_required
+def category_add_post():
+    name = request.form.get('name')
+    description = request.form.get('description')
+
+    if not name:
+        flash("Name is mandatory")
+        return redirect(url_for('category_add'))
+    
+    category = Category.query.filter_by(name=name).first()
+    if category:
+        flash("Category with this name already exists")
+        return redirect(url_for('category_add'))
+
+    if len(name) > 15:
+        flash("Category Name cannot be more than 15 characters")
+        return redirect(url_for('category_add'))
+
+    if len(description) > 250:
+        flash("Category Description cannot be more than 250 characters")
+        return redirect(url_for('category_add'))
+    
+    category = Category(name=name, description=description)
+    db.session.add(category)
+    db.session.commit()
+    flash("Category added Successfully")
+    return redirect(url_for('category_list'))
+
+@app.route('/category/<int:id>/edit')
+@admin_required
+def category_edit(id):
+    category = Category.query.get(id)
+    return render_template('admin/category/edit.html', category=category)
+
+@app.route('/category/<int:id>/edit', methods=['POST'])
+@admin_required
+def category_edit_post(id):
+    name = request.form.get('name')
+    description = request.form.get('description')
+
+    if not name:
+        flash("Name is mandatory")
+        return redirect(url_for('category_add'))
+
+    current_category = Category.query.get(id)
+    category = Category.query.filter_by(name=name).first()
+
+    if category and category.id != current_category.id:
+        flash("Category with this name already exists")
+        return redirect(url_for('category_add'))
+
+    if len(name) > 15:
+        flash("Category Name cannot be more than 15 characters")
+        return redirect(url_for('category_add'))
+
+    if len(description) > 250:
+        flash("Category Description cannot be more than 250 characters")
+        return redirect(url_for('category_add'))
+    
+    current_category.name = name
+    current_category.description = description
+    db.session.commit()
+    flash("Category edited Successfully")
+    return redirect(url_for('category_list'))
+
+@app.route('/category/<int:id>/delete')
+@admin_required
+def category_delete(id):
+    category = Category.query.get(id)
+    return render_template('admin/category/delete.html', category=category)
+
+@app.route('/category/<int:id>/delete', methods=['POST'])
+@admin_required
+def category_delete_post(id):
+    category = Category.query.get(id)
+    if not category:
+        flash("Category does not exist")
+        return redirect(url_for('category_delete'))
+    db.session.delete(category)
+    db.session.commit()
+    flash("Category deleted successfully")
+    return redirect(url_for('category_list'))
