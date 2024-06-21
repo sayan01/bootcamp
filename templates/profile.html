@@ -29,6 +29,11 @@
     <input class="form-control" type="password" name="npassword" id="npassword">
     <button class="btn btn-primary" type="submit">Change</button>
 </form>
+
+<form action="{{url_for('delete_user', id=user.id)}}" method="post">
+    <button class="btn btn-danger" type="submit">Delete my account</button>
+</form>
+
 {% endblock %}
 
 {% block style %}

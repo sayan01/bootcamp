@@ -69,6 +69,22 @@ def profile_post():
     db.session.commit()
     return redirect(url_for('profile'))
 
+@app.route('/users/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_user(id):
+    user = User.query.get(id)
+    if not user:
+        flash("Invalid User ID")
+        return redirect(url_for('profile'))
+    if user.username != session['username']:
+        flash("You are not authorized to perform this action")
+        return redirect(url_for('profile'))
+
+    db.session.delete(user)
+    db.session.commit()
+    session.pop('username')
+    flash("Delete succcessful")
+    return redirect(url_for('login'))
 
 
 @app.route('/login')
