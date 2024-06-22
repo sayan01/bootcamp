@@ -43,7 +43,8 @@ def home():
     user = User.query.filter_by(username=username).first()
     if user.is_admin:
         return redirect(url_for('admin'))
-    return render_template('index.html', user=user)
+    categories = Category.query.all()
+    return render_template('index.html', user=user, categories=categories)
                            
 
 @app.route('/profile')

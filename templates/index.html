@@ -2,4 +2,57 @@
   {% block content %}
   <h1>Hi {{user.username}}</h1> 
 <a href="{{url_for('logout')}}" class="btn btn-danger">Logout</a>
+<hr>
+{% for category in categories %}
+  <h2>{{category.name}}</h2>
+  <div class="products">
+    {% for product in category.products %}
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{product.name}}</h5>
+          <h6 class="card-subtitle mb-2 text-body-secondary">
+              &#8377;
+            {{product.price}} | {{product.quantity}} items
+          </h6>
+          <p class="card-text">{{product.description}}</p>
+          <div class="optional">
+            {% if product.dom %}
+              <strong>Date of Manufacturing:</strong> {{product.dom}}
+            {% endif %}
+            <br>
+            {% if product.best_before %}
+              <strong>Best Before:</strong> {{product.best_before}} days
+            {% endif %}
+          </div>
+        </div>
+        <div class="card-footer">
+          <form action="" method="post">
+            <div class="cart-form">
+              <input class="form-control" type="number" name="quantity" id="quantity" placeholder="Quantity">
+              <button class="btn btn-outline-primary" type="submit">
+                <i class="fa fa-cart-plus" aria-hidden="true"></i>
+                Add to Cart</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endfor %}
+  {% endblock %}
+
+  {% block style %}
+    <style>
+      .products{
+        display: flex;
+      }
+      .cart-form{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .cart-form button{
+        margin-top: 10px;
+      }
+    </style>
   {% endblock %}
