@@ -14,6 +14,8 @@ class User(db.Model):
     dicebear_image = db.Column(db.String(50), nullable=True, default="lorelei")
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
+    carts = db.relationship('Cart', backref='user', lazy=True, cascade='all, delete-orphan')
+
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(15), nullable=False)
@@ -31,6 +33,8 @@ class Product(db.Model):
     best_before = db.Column(db.Integer, nullable=True)
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+
+    carts = db.relationship('Cart', backref='product', lazy=True, cascade='all, delete-orphan')
 
 
 class Cart(db.Model):

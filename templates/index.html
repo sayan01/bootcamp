@@ -33,14 +33,19 @@
           </div>
         </div>
         <div class="card-footer">
-          <form action="" method="post">
+          {% if product.quantity > 0 %}
+            
+          <form action="{{url_for('add_to_cart', id=product.id)}}" method="post">
             <div class="cart-form">
-              <input class="form-control" type="number" name="quantity" id="quantity" placeholder="Quantity">
+              <input class="form-control" type="number" name="quantity" id="quantity" placeholder="Quantity" value="1">
               <button class="btn btn-outline-primary" type="submit">
                 <i class="fa fa-cart-plus" aria-hidden="true"></i>
                 Add to Cart</button>
             </div>
           </form>
+          {% else %}
+          Out of Stock
+          {% endif %}
         </div>
       </div>
     {% endfor %}

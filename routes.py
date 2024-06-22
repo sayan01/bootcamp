@@ -460,3 +460,38 @@ def product_edit_post(id):
     db.session.commit()
     flash("Product edited successfully")
     return redirect(url_for('product_list', id=product.category.id))
+
+
+@app.route('/product/<int:id>/cart', methods=['POST'])
+@login_required
+def add_to_cart(id):
+    product = Product.query.get(id)
+    if not product:
+        flash("Product does not exist")
+        return redirect(url_for('home'))
+    quantity = request.form.get('quantity')
+    if not quantity:
+        flash("Quantity is mandatory")
+        return redirect(url_for('home'))
+    quantity = float(quantity)
+    if quantity != int(quantity):
+        flash("Quantity cannot be fractional")
+        return redirect(url_for('home'))
+    quantity = int(quantity)
+    if quantity > product.quantity:
+        flash("Quantity cannot be more than "+product.quantity)
+        return redirect(url_for('home'))
+    user = User.query.filter_by(username=session['username']).first()
+    cart = Cart(user=user, product=product, quantity=quantity)
+    db.session.add(cart)
+    db.session.commit()
+    flash("Item added to cart", category="success")
+    return redirect(url_for('home'))
+
+@app.route('/cart')
+@login_required
+def cart():
+    user = User.query.filter_by(username=session['username']).first()
+    total = sum([cart.product.price * cart.quantity for cart in user.carts])
+    return render_template('cart.html', user=user,total=total)
+
