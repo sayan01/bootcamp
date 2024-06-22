@@ -82,6 +82,7 @@ def profile_post():
             flash("Username is already taken, please choose any other username")
             return redirect(url_for('profile'))
         user.username = nusername
+        session['username']=nusername
         flash(f"Username changed to {nusername}")
 
     db.session.commit()
@@ -343,13 +344,14 @@ def product_add_post(id):
             flash("Best Before cannot be fractional")
             return redirect(url_for('product_add'))
 
-#   if dom:
-#       dom = datetime.strptime(dom,"yyyy-mm-dd")
-#       if dom > datetime.now():
-#           flash("Quantity cannot be fractional")
-#           return redirect(url_for('product_add'))
+    if dom:
+        dom = datetime.strptime(dom,"%Y-%m-%d")
+        if dom > datetime.now():
+            flash("Quantity cannot be fractional")
+            return redirect(url_for('product_add'))
+    else:
+        dom=None
         
-        dom=datetime.now()
     product = Product(
         name=name,
         description=description,
