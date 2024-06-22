@@ -539,3 +539,41 @@ def cart_update(id):
     db.session.commit()
     return redirect(url_for('cart'))
 
+@app.route('/checkout')
+@login_required
+def checkout():
+    user = User.query.filter_by(username=session['username']).first()
+    total = sum([cart.product.price * cart.quantity for cart in user.carts])
+    return render_template('checkout.html', user=user, total=total)
+
+@app.route('/checkout', methods=['POST'])
+@login_required
+def checkout_post():
+    user = User.query.filter_by(username=session['username']).first()
+    mode = request.form.get('mode')
+    transaction = Transaction(user=user,mode=mode)
+
+    for cart in user.carts:
+        if cart.quantity > cart.product.quantity:
+            flash(f"{cart.quantity} {cart.product.name} is no longer available")
+            if cart.product.quantity > 0:
+                cart.quantity = cart.product.quantity
+            else:
+                db.session.delete(cart)
+                continue
+        cart.product.quantity -= cart.quantity
+        order = Order(transaction=transaction, product=cart.product, quantity=cart.quantity, price=cart.product.price)
+        db.session.add(order)
+        db.session.delete(cart)
+        db.session.commit()
+    flash("Order placed successfully",category='success')
+    return redirect(url_for('orders'))
+
+
+@app.route('/orders')
+@login_required
+def orders():
+    user = User.query.filter_by(username=session['username']).first()
+    return render_template('orders.html', user=user)
+
+

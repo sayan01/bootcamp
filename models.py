@@ -15,6 +15,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
     carts = db.relationship('Cart', backref='user', lazy=True, cascade='all, delete-orphan')
+    transactions = db.relationship('Transaction', backref='user', lazy=True, cascade='all, delete-orphan')
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,6 +36,7 @@ class Product(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
 
     carts = db.relationship('Cart', backref='product', lazy=True, cascade='all, delete-orphan')
+    orders = db.relationship('Order', backref='product', lazy=True, cascade='all, delete-orphan')
 
 
 class Cart(db.Model):
@@ -48,6 +50,8 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     datetime = db.Column(db.DateTime, nullable=False, default=datetime.now())
     mode = db.Column(db.String(20), nullable=False)
+
+    orders = db.relationship('Order', backref='transaction', lazy=True, cascade='all, delete-orphan')
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)

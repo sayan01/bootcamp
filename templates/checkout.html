@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Proceed to Checkout</h1>
+    <h2>Total Amount: 	&#8377;{{total}}</h2>
+    <hr>
+    Confirm your purchase
+    <form action="" method="post">
+        <label for="mode">Payment Method:</label>
+        <select name="mode" id="mode" class="form-select">
+            <option value="upi">UPI</option>
+            <option value="cc">Credit Card</option>
+            <option value="dc">Debit Card</option>
+        </select>
+        <button type="submit" class="btn btn-success">
+            <i class="fa fa-dollar" aria-hidden="true"></i>
+            Buy
+        </button>
+    </form>
+{% endblock %}
