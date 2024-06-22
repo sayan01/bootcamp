@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <h1>Search</h1> 
+  <form class="d-flex search" role="search">
+        <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="search" 
+        {% if query %}
+        value="{{query}}"
+        {% endif %}
+        >
+        <button class="btn btn-outline-success" type="submit">
+            Search</button>
+    </form>
+{% if query %}
+    
+    <h2>Categories matching your search:</h2>
+    {% if categories %}
+         {% for category in categories %}
+            {{category.name}}
+         {% endfor %}
+    {% else %}
+    No matches
+    {% endif %}
+
+    <hr>
+
+    <h2>Products matching your search:</h2>
+    {% if products %}
+         {% for product in products %}
+            {{product.name}}
+         {% endfor %}
+    {%else%}
+    No matches
+    {% endif %}
+
+{% endif %}
+{% endblock %}
+
+{% block style %}
+<style>
+    .search{
+        gap: 15px;
+    }
+</style>
+{% endblock %}

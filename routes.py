@@ -576,4 +576,15 @@ def orders():
     user = User.query.filter_by(username=session['username']).first()
     return render_template('orders.html', user=user)
 
+@app.route('/search')
+@login_required
+def search():
+    query = request.args.get('search')
+    categories, products = None, None
+    if query:
+        categories = Category.query.filter(Category.name.ilike(f'%{query}%')).all()
+        products = Product.query.filter(Product.name.ilike(f'%{query}%')).all()
+
+    return render_template('search.html', query=query, categories=categories, products=products)
+
 
