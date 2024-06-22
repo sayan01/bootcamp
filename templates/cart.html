@@ -21,7 +21,23 @@
                     <td>{{cart.quantity}}</td>
                     <td>{{cart.product.price * cart.quantity}}</td>
                     <td>
-                        <a href="#" class="btn btn-outline-danger">Remove</a>
+                        <div class="actions">
+                            <form action="{{url_for('cart_delete', id=cart.id)}}" method="post">
+                            <button type="submit" class="btn btn-outline-danger">Remove</button>
+                            </form>
+                            <form action="{{url_for('cart_update', id=cart.id)}}" method="post">
+                            <input class="hidden" type="number" name="amount" id="amount" value="-1">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fa fa-minus" aria-hidden="true"></i>
+                            </button>
+                            </form>
+                            <form action="{{url_for('cart_update', id=cart.id)}}" method="post">
+                            <input class="hidden" type="number" name="amount" id="amount" value="1">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
@@ -36,4 +52,16 @@
     <a href="#" class="btn btn-success">
         <i class="fa fa-cart-arrow-down" aria-hidden="true"></i>
         Proceed to Checkout</a>
+{% endblock %}
+
+{% block style %}
+   <style>
+    .actions{
+        display: flex;
+        gap: 8px;
+    }
+    .hidden{
+        display: none;
+    }
+   </style>
 {% endblock %}

@@ -482,8 +482,15 @@ def add_to_cart(id):
         flash("Quantity cannot be more than "+product.quantity)
         return redirect(url_for('home'))
     user = User.query.filter_by(username=session['username']).first()
-    cart = Cart(user=user, product=product, quantity=quantity)
-    db.session.add(cart)
+    cart = Cart.query.filter_by(user=user,product=product).first()
+    if cart:
+        if cart.quantity + quantity > product.quantity:
+            flash("Total Quantity cannot be more than "+product.quantity)
+            return redirect(url_for('home'))
+        cart.quantity += quantity
+    else:
+        cart = Cart(user=user, product=product, quantity=quantity)
+        db.session.add(cart)
     db.session.commit()
     flash("Item added to cart", category="success")
     return redirect(url_for('home'))
@@ -494,4 +501,41 @@ def cart():
     user = User.query.filter_by(username=session['username']).first()
     total = sum([cart.product.price * cart.quantity for cart in user.carts])
     return render_template('cart.html', user=user,total=total)
+
+@app.route('/cart/<int:id>/delete', methods=['POST'])
+@login_required
+def cart_delete(id):
+    cart = Cart.query.get(id)
+    if not cart:
+        flash("Cart does not exist")
+        return redirect(url_for('cart'))
+    db.session.delete(cart)
+    db.session.commit()
+    flash("Item removed from cart",category="success")
+    return redirect(url_for('cart'))
+
+@app.route('/cart/<int:id>/update', methods=['POST'])
+@login_required
+def cart_update(id):
+    cart = Cart.query.get(id)
+    if not cart:
+        flash("Cart does not exist")
+        return redirect(url_for('cart'))
+    amount = request.form.get('amount')
+    amount = int(float(amount))
+
+    if cart.quantity + amount < 0:
+        flash("Quantity cannot be negative")
+        return redirect(url_for('cart'))
+
+    if cart.quantity + amount > cart.product.quantity:
+        flash("Quantity cannot be more than "+cart.product.quantity)
+        return redirect(url_for('cart'))
+    
+    cart.quantity += amount
+
+    if cart.quantity == 0:
+        db.session.delete(cart)
+    db.session.commit()
+    return redirect(url_for('cart'))
 
