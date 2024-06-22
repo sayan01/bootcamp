@@ -28,10 +28,21 @@
         <td>{{product.description}}</td>
         <td>{{product.price}}</td> 
         <td>{{product.quantity}}</td> 
-        <td>{{product.dom}}</td> 
-        <td>{{product.best_before}}</td> 
         <td>
-        <a href="" class="btn btn-outline-primary">
+            {% if product.dom %}
+            {{product.dom}}
+            {% else %}
+            N/A
+            {% endif %}
+        </td> 
+        <td>
+            {% if product.best_before %}
+            {{product.best_before}} days
+            {% else %}
+            N/A
+            {% endif %}
+        <td>
+        <a href="{{url_for('product_edit',id=product.id)}}" class="btn btn-outline-primary">
             <i class="fa fa-pencil" aria-hidden="true"></i>
             Edit</a>
         <a href="{{url_for('product_delete', id=product.id)}}" class="btn btn-danger">

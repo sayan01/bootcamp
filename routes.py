@@ -314,41 +314,41 @@ def product_add_post(id):
 
     if not name or not price or not quantity:
         flash("Name, Price, and Quantity are mandatory")
-        return redirect(url_for('product_add'))
+        return redirect(url_for('product_add',id=id))
 
     if len(name) > 15:
         flash("Product Name cannot be more than 15")
-        return redirect(url_for('product_add'))
+        return redirect(url_for('product_add',id=id))
 
     if len(description) > 250:
         flash("Product Description cannot be more than 250")
-        return redirect(url_for('product_add'))
+        return redirect(url_for('product_add',id=id))
 
     price = float(price)
     quantity = float(quantity)
 
     if price < 0 or quantity < 0:
         flash("Price, Quantity cannot be negative")
-        return redirect(url_for('product_add'))
+        return redirect(url_for('product_add',id=id))
 
     if int(quantity) != quantity:
         flash("Quantity cannot be fractional")
-        return redirect(url_for('product_add'))
+        return redirect(url_for('product_add',id=id))
 
     if best_before:
         best_before = float(best_before)
         if best_before < 0:
             flash("Best Before cannot be negative")
-            return redirect(url_for('product_add'))
+            return redirect(url_for('product_add',id=id))
         if int(best_before) != best_before:
             flash("Best Before cannot be fractional")
-            return redirect(url_for('product_add'))
+            return redirect(url_for('product_add', id=id))
 
     if dom:
         dom = datetime.strptime(dom,"%Y-%m-%d")
         if dom > datetime.now():
-            flash("Quantity cannot be fractional")
-            return redirect(url_for('product_add'))
+            flash("Date cannot be in the future")
+            return redirect(url_for('product_add', id=id))
     else:
         dom=None
         
@@ -384,3 +384,78 @@ def product_delete_post(id):
     db.session.commit()
     flash("Product deleted successfully")
     return redirect(url_for('product_list', id=cat_id))
+
+
+@app.route('/product/<int:id>/edit')
+@admin_required
+def product_edit(id):
+    product = Product.query.get(id)
+    if not product:
+        flash("Product does not exist")
+        return redirect(url_for('categories_list'))
+    return render_template('admin/product/edit.html', product=product)
+
+@app.route('/product/<int:id>/edit', methods=['POST'])
+@admin_required
+def product_edit_post(id):
+    product = Product.query.get(id)
+    if not product:
+        flash("Product does not exist")
+        return redirect(url_for('categories_list'))
+
+    name = request.form.get('name')
+    description = request.form.get('description')
+    price = request.form.get('price')
+    quantity = request.form.get('quantity')
+    dom = request.form.get('dom')
+    best_before = request.form.get('best_before')
+
+    if not name or not price or not quantity:
+        flash("Name, Price, and Quantity are mandatory")
+        return redirect(url_for('product_add',id=id))
+
+    if len(name) > 15:
+        flash("Product Name cannot be more than 15")
+        return redirect(url_for('product_add',id=id))
+
+    if len(description) > 250:
+        flash("Product Description cannot be more than 250")
+        return redirect(url_for('product_add',id=id))
+
+    price = float(price)
+    quantity = float(quantity)
+
+    if price < 0 or quantity < 0:
+        flash("Price, Quantity cannot be negative")
+        return redirect(url_for('product_add',id=id))
+
+    if int(quantity) != quantity:
+        flash("Quantity cannot be fractional")
+        return redirect(url_for('product_add',id=id))
+
+    if best_before:
+        best_before = float(best_before)
+        if best_before < 0:
+            flash("Best Before cannot be negative")
+            return redirect(url_for('product_add',id=id))
+        if int(best_before) != best_before:
+            flash("Best Before cannot be fractional")
+            return redirect(url_for('product_add', id=id))
+
+    if dom:
+        dom = datetime.strptime(dom,"%Y-%m-%d")
+        if dom > datetime.now():
+            flash("Date cannot be in the future")
+            return redirect(url_for('product_add', id=id))
+    else:
+        dom=None
+        
+    product.name = name
+    product.description = description
+    product.price = price
+    product.quantity = quantity
+    product.dom = dom
+    product.best_before = best_before
+    db.session.commit()
+    flash("Product edited successfully")
+    return redirect(url_for('product_list', id=product.category.id))

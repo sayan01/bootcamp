@@ -1,0 +1,45 @@
+
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Edit Product</h1>
+    <hr>
+    <form action="" method="post">
+        <label class="form-label" for="category">Category ID:</label>
+        <input class="form-control" type="number" name="category" id="category" 
+          value="{{product.category.id}}" disabled>
+
+        <label class="form-label" for="name">Product Name:</label>
+        <input class="form-control" type="text" name="name" id="name"
+        value="{{product.name}}"
+        maxlength="15">
+
+        <label class="form-label" for="description">Product Description:</label>
+        <textarea name="description" id="description" cols="30" rows="5" maxlength="250" class="form-control"
+        >{{product.description}}</textarea>
+
+        <label class="form-label" for="price">Price:</label>
+        <input class="form-control" type="number" name="price" id="price"
+        value="{{product.price}}"
+         >
+
+        <label class="form-label" for="quantity">Quantity:</label>
+        <input class="form-control" type="number" name="quantity" id="quantity"
+         value="{{product.quantity}}"
+         >
+
+        <label class="form-label" for="dom">Date of Manufacture:</label>
+        <input class="form-control" type="date" name="dom" id="dom"
+        value="{{product.dom}}" >
+        
+        <label class="form-label" for="best_before">Best Before:</label>
+        <input class="form-control" type="number" name="best_before" id="best_before"
+        value="{{product.best_before}}" >
+
+
+        <button type="submit" class="btn btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            Edit
+        </button>
+    </form>
+{% endblock %}
