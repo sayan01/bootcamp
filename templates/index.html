@@ -4,20 +4,27 @@
 <a href="{{url_for('logout')}}" class="btn btn-danger">Logout</a>
 <hr>
 {% for category in categories %}
-  <h2>{{category.name}}</h2>
+  <h2 class="mb-3 text-center">{{category.name}}</h2>
   <div class="products">
     {% for product in category.products %}
       <div class="card" style="width: 18rem;">
         <div class="card-body">
-          <h5 class="card-title">{{product.name}}</h5>
-          <h6 class="card-subtitle mb-2 text-body-secondary">
+          <h5 class="card-title text-center">{{product.name}}</h5>
+          <hr>
+          <h6 class="card-subtitle mb-2 text-body-secondary product-sub">
+            <div class="product-price">
               &#8377;
-            {{product.price}} | {{product.quantity}} items
+              {{product.price}} 
+            </div>
+            <div class="product quantity">
+              {{product.quantity}} items
+            </div>
           </h6>
-          <p class="card-text">{{product.description}}</p>
+          <p class="card-text text-center">{{product.description}}</p>
+          <hr>
           <div class="optional">
             {% if product.dom %}
-              <strong>Date of Manufacturing:</strong> {{product.dom}}
+              <strong>Manufactured:</strong> {{product.dom.strftime('%b %d, %Y')}}
             {% endif %}
             <br>
             {% if product.best_before %}
@@ -38,6 +45,7 @@
       </div>
     {% endfor %}
   </div>
+  <hr>
 {% endfor %}
   {% endblock %}
 
@@ -45,6 +53,11 @@
     <style>
       .products{
         display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .card{
+        min-width: 300px;
       }
       .cart-form{
         display: flex;
@@ -53,6 +66,11 @@
       }
       .cart-form button{
         margin-top: 10px;
+        width: 100%;
+      }
+      .product-sub{
+        display: flex;
+        justify-content: space-between;
       }
     </style>
   {% endblock %}
