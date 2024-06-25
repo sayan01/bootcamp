@@ -23,4 +23,35 @@
         <i class="fas fa-warehouse"></i>
         All Categories
     </a>
+    <div>
+    <canvas id="myChart"></canvas>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{category_names | safe}},
+      datasets: [{
+        label: '# of Products in each Category',
+        data: {{category_sizes | safe}},
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
 {% endblock %}

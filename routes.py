@@ -45,7 +45,7 @@ def home():
         return redirect(url_for('admin'))
     categories = Category.query.all()
     return render_template('index.html', user=user, categories=categories)
-                           
+
 
 @app.route('/profile')
 @login_required
@@ -175,7 +175,9 @@ def logout():
 def admin():
     users = User.query.all()
     categories = Category.query.all()
-    return render_template('admin.html', users=users, categories=categories)
+    category_names = [category.name for category in categories]
+    category_sizes =[len(category.products) for category in categories]
+    return render_template('admin.html', users=users, categories=categories, category_names=category_names, category_sizes=category_sizes)
 
 @app.route('/users')
 @admin_required
@@ -203,7 +205,7 @@ def category_add_post():
     if not name:
         flash("Name is mandatory")
         return redirect(url_for('category_add'))
-    
+
     category = Category.query.filter_by(name=name).first()
     if category:
         flash("Category with this name already exists")
@@ -216,7 +218,7 @@ def category_add_post():
     if len(description) > 250:
         flash("Category Description cannot be more than 250 characters")
         return redirect(url_for('category_add'))
-    
+
     category = Category(name=name, description=description)
     db.session.add(category)
     db.session.commit()
@@ -253,7 +255,7 @@ def category_edit_post(id):
     if len(description) > 250:
         flash("Category Description cannot be more than 250 characters")
         return redirect(url_for('category_add'))
-    
+
     current_category.name = name
     current_category.description = description
     db.session.commit()
@@ -352,7 +354,7 @@ def product_add_post(id):
             return redirect(url_for('product_add', id=id))
     else:
         dom=None
-        
+
     product = Product(
         name=name,
         description=description,
@@ -450,7 +452,7 @@ def product_edit_post(id):
             return redirect(url_for('product_add', id=id))
     else:
         dom=None
-        
+
     product.name = name
     product.description = description
     product.price = price
@@ -531,7 +533,7 @@ def cart_update(id):
     if cart.quantity + amount > cart.product.quantity:
         flash("Quantity cannot be more than "+cart.product.quantity)
         return redirect(url_for('cart'))
-    
+
     cart.quantity += amount
 
     if cart.quantity == 0:

@@ -1,0 +1,16 @@
+.profilepic{
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    width: 150px;
+    margin-right: 25px;
+}
+.profilecard{
+    margin: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.profileinfo{
+    display: flex;
+    flex-direction: column;
+}
