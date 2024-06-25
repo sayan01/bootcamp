@@ -4,6 +4,8 @@ from models import db, User, Category, Product, Cart, Transaction, Order
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime
+import os
+import csv
 # routes
 
 # decorator
@@ -589,4 +591,19 @@ def search():
 
     return render_template('search.html', query=query, categories=categories, products=products)
 
+
+
+@app.route('/data')
+@admin_required
+def export_data():
+    categories = Category.query.all()
+    current_user = User.query.filter_by(username=session['username']).first()
+    filename= current_user.username + str(datetime.now()) + '_data.csv'
+    path = os.path.join('static', filename)
+    with open(path, 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"')
+        csvwriter.writerow(['category_id', 'category_name', 'number_of_products'])
+        for category in categories:
+            csvwriter.writerow([category.id, category.name, len(category.products)])
+    return redirect(url_for('static', filename=filename))
 
