@@ -1,4 +1,4 @@
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from main import app
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -16,6 +16,17 @@ class User(db.Model):
 
     carts = db.relationship('Cart', backref='user', lazy=True, cascade='all, delete-orphan')
     transactions = db.relationship('Transaction', backref='user', lazy=True, cascade='all, delete-orphan')
+
+    @property
+    def password(self):
+        raise AttributeError("password cannot be RHS")
+
+    @password.setter
+    def password(self,password):
+        self.passhash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.passhash, password)
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,7 +75,6 @@ with app.app_context():
     db.create_all()
     admin = User.query.filter_by(is_admin=True).first()
     if not admin:
-        passhash=generate_password_hash('admin')
-        admin = User(username='admin', passhash=passhash, name='Admin', is_admin=True)
+        admin = User(username='admin', password=password, name='Admin', is_admin=True)
         db.session.add(admin)
         db.session.commit()

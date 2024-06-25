@@ -3,3 +3,4 @@ venv
 *cache*
 instance
 static/*.csv
+log.txt

@@ -121,7 +121,7 @@ def login_post():
     username = request.form.get('username')
     password = request.form.get('password')
     user = User.query.filter_by(username=username).first()
-    if not user or not check_password_hash(user.passhash, password):
+    if not user or not user.check_password(password):
         flash("Username or password is incorrect")
         return redirect(url_for('login'))
     session['username'] = username
@@ -155,10 +155,7 @@ def register_post():
         flash("Please choose another username, selected username is taken")
         return redirect(url_for('register'))
 
-
-    passhash = generate_password_hash(password)
-
-    user = User(name=name, username=username, passhash=passhash)
+    user = User(name=name, username=username, password=password)
     db.session.add(user)
     db.session.commit()
     flash("Registration Successful, Please login to continue")
